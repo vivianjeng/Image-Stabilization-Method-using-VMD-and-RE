@@ -1,0 +1,39 @@
+MLAB = /usr/local/Matlab/R2010a
+
+MXSFX = mexglx
+MEX = ${MLAB}/bin/mex
+
+MFLAGS = 
+INC = -I ${MLAB}/extern/include
+LIB = -L ${MLAB}/extern/lib
+
+CC = gcc -Wall -pedantic
+C_OPTIMIZE_SWITCH = -O2    ## For GCC
+CFLAGS = ${C_OPTIMIZE_SWITCH} ${INC} ${LIB}
+
+all: corrDn.${MXSFX} upConv.${MXSFX} pointOp.${MXSFX} \
+	histo.${MXSFX} range2.${MXSFX}
+
+clean:
+	/bin/rm *.o
+
+corrDn.${MXSFX}: corrDn.c wrap.c convolve.c edges.c
+	${MEX} ${MFLAGS} corrDn.c wrap.c convolve.c edges.c
+
+upConv.${MXSFX}: upConv.c wrap.c convolve.c edges.c
+	${MEX} ${MFLAGS} upConv.c wrap.c convolve.c edges.c
+
+pointOp.${MXSFX}: pointOp.c
+	${MEX} ${MFLAGS} pointOp.c
+
+histo.${MXSFX}: histo.c
+	${MEX} ${MFLAGS} histo.c
+
+range2.${MXSFX}: range2.c
+	${MEX} ${MFLAGS} range2.c
+
+convolve.c wrap.c edges.c: convolve.h 
+
+%.o : %.c
+	${CC} -c ${CFLAGS} $<		
+
